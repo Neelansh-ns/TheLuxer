@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_menu_camera1"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_cat"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Category">
+            <menu>
+                <item
+                    android:title="Shirts"
+                    />
+                <item
+                    android:title="TShirts"
+                    />
+                <item
+                    android:title="Jeans"
+                    />
+                <item
+                    android:title="Formal"
+                    />
+                <item
+                    android:title="Sports Shoes"
+                    />
+                <item
+                    android:title="Formal Shoes"
+                    />
+                <item
+                    android:title="Sneakers"
+                    />
+                <item
+                    android:title="Socks"
+                    />
+                <item
+                    android:title="Belts"
+                    />
+            </menu>
+        </item>
+
+
+        <item
+            android:id="@+id/nav_acc"
+            android:icon="@drawable/ic_menu_slideshow1"
+            android:title="My Account" />
+        <item
+            android:id="@+id/nav_fav"
+            android:icon="@drawable/ic_menu_manage1"
+            android:title="Cart" />
+
+            <item
+                android:id="@+id/nav_order"
+                android:icon="@drawable/ic_menu_share1"
+                android:title="My Orders" />
+            <item
+                android:id="@+id/nav_con"
+                android:icon="@drawable/ic_menu_send1"
+                android:title="Contact Us" />
+        </menu>
+
+
