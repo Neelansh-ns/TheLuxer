@@ -220,6 +220,8 @@ public class SecondActivity extends AppCompatActivity
 
     class loginAccess extends AsyncTask<String, String, String> {
 
+        JSONObject json;
+
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(SecondActivity.this);
@@ -232,32 +234,36 @@ public class SecondActivity extends AppCompatActivity
         protected String doInBackground(String... arg0) {
             List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-            JSONObject json = jsonParser.makeHttpRequest(url,"POST", params);
-            Log.d("Create Response", json.toString());
-
             try {
-                int success = json.getInt(TAG_SUCCESS);
-                if (success == 1)
-                {
-                    flag=0;
-                    dataa = json.getJSONArray("data");
-                    int l = dataa.length();
-                    for (int i = 0; i < l; i++) {
-                        JSONObject c = dataa.getJSONObject(i);
+                json = jsonParser.makeHttpRequest(url, "POST", params);
+                Log.d("Create Response", String.valueOf(json));
+                if (json == null)
+                    SecondActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Oops, API response null", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                else {
+                    int success = json.getInt(TAG_SUCCESS);
+                    if (success == 1) {
+                        flag = 0;
+                        dataa = json.getJSONArray("data");
+                        int l = dataa.length();
+                        for (int i = 0; i < l; i++) {
+                            JSONObject c = dataa.getJSONObject(i);
 
-                        //   String category_id = c.getString("category_id");
-                        String category_name = c.getString("category_name");
-                        String category_id = c.getString("category_id");
-                        String category_image = "http://"+IPAddress.IPADDRESS+"/"+c.getString("category_image");
-                        listOne.add(new menuone(category_name,category_image));
+                            //   String category_id = c.getString("category_id");
+                            String category_name = c.getString("category_name");
+                            String category_id = c.getString("category_id");
+                            String category_image = "http://" + IPAddress.IPADDRESS + "/" + c.getString("category_image");
+                            listOne.add(new menuone(category_name, category_image));
+                        }
+                    } else {
+                        // failed to login
+                        flag = 1;
                     }
                 }
-                else
-                {
-                    // failed to login
-                    flag=1;
-                }
-            } catch (JSONException e) {
+            }catch (JSONException e) {
                 e.printStackTrace();
             }
             return null;

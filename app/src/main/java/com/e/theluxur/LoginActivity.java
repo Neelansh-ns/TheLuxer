@@ -112,26 +112,30 @@ public class LoginActivity extends AppCompatActivity {
             params.add(new BasicNameValuePair("mobile_number", number));
             params.add(new BasicNameValuePair("password", pwd));
             JSONObject json = jsonParser.makeHttpRequest(url,"POST", params);
-            Log.d("Create Response", json.toString());
-
-            try {
-                int success = json.getInt(TAG_SUCCESS);
-                if (success == 1)
-                {
-                    flag=0;
-                    Intent i = new Intent(getApplicationContext(),Welcome.class);
-                    i.putExtra("mobile_number",number);
-                    i.putExtra("password",pwd);
-                    startActivity(i);
-                    finish();
+            Log.d("Create Response", String.valueOf(json));
+            if (json == null)
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Oops, API response null", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            else {
+                try {
+                    int success = json.getInt(TAG_SUCCESS);
+                    if (success == 1) {
+                        flag = 0;
+                        Intent i = new Intent(getApplicationContext(), Welcome.class);
+                        i.putExtra("mobile_number", number);
+                        i.putExtra("password", pwd);
+                        startActivity(i);
+                        finish();
+                    } else {
+                        // failed to login
+                        flag = 1;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                else
-                {
-                    // failed to login
-                    flag=1;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
             return null;
         }
