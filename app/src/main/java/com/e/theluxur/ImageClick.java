@@ -143,8 +143,8 @@ public class ImageClick extends AppCompatActivity {
             cursor.close();
 
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-//            ImageView imageView = (ImageView) findViewById(R.id.Imageprev);
-//            imageView.setImageBitmap(photo);
+            ImageView imageView = (ImageView) findViewById(R.id.Imageprev);
+            imageView.setImageBitmap(photo);
         }
     }
 
