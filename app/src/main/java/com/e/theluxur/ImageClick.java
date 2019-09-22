@@ -1,12 +1,12 @@
 package com.e.theluxur;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -35,34 +36,8 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import java.util.Base64;
 
 public class ImageClick extends AppCompatActivity {
 
@@ -95,6 +70,7 @@ public class ImageClick extends AppCompatActivity {
 
         btnup = (Button) findViewById(R.id.up);
         btnup.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 upload();
@@ -131,16 +107,18 @@ public class ImageClick extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void upload() {
         // Image location URL
         Log.e("path", "----------------" + picturePath);
 
         // Image
+
         Bitmap bm = BitmapFactory.decodeFile(picturePath);
         ByteArrayOutputStream bao = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
         byte[] ba = bao.toByteArray();
-        //ba1 = Base64.encodeBytes(ba);
+        ba1 = Base64.getEncoder().encodeToString(ba);
 
         Log.e("base64", "-----" + ba1);
 
