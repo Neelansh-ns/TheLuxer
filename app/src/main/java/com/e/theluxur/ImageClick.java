@@ -1,9 +1,14 @@
 package com.e.theluxur;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -61,6 +66,7 @@ import java.util.ArrayList;
 
 public class ImageClick extends AppCompatActivity {
 
+    private static final int PERMISSION_REQUEST_CODE = 200;
     Button btpic, btnup;
     private Uri fileUri;
     String picturePath;
@@ -77,7 +83,13 @@ public class ImageClick extends AppCompatActivity {
         btpic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                clickpic();
+
+                if(checkPermission())
+                {
+                    clickpic();
+                }
+                else
+                    requestPermission();
             }
         });
 
@@ -88,6 +100,35 @@ public class ImageClick extends AppCompatActivity {
                 upload();
             }
         });
+    }
+
+    private boolean checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            return false;
+        }
+        return true;
+    }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                PERMISSION_REQUEST_CODE);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+                clickpic();
+            } else {
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void upload() {
@@ -114,7 +155,7 @@ public class ImageClick extends AppCompatActivity {
                 PackageManager.FEATURE_CAMERA_ANY)) {
             // Open default camera
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
 
             // start the image capture Intent
             startActivityForResult(intent, 100);
@@ -124,16 +165,27 @@ public class ImageClick extends AppCompatActivity {
         }
     }
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == RESULT_OK) {
 
-            selectedImage = data.getData();
+            Log.d("zzz", String.valueOf(data));
+            Log.d("zzz", String.valueOf(selectedImage));
             photo = (Bitmap) data.getExtras().get("data");
+            selectedImage = getImageUri(getApplicationContext(),photo);
+            Log.d("zzz", String.valueOf(photo));
 
             // Cursor to get image uri to display
 
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Log.d("zzz", String.valueOf(filePathColumn));
             Cursor cursor = getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
             cursor.moveToFirst();
