@@ -190,8 +190,8 @@ public class SecondActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-
-            // Handle the camera action
+            Intent A = new Intent(getApplicationContext(),ImageClick.class);
+            startActivity(A);
         } else if (id == R.id.nav_cat) {
 
 
